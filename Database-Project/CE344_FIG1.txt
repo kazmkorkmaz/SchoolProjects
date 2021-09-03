@@ -1,0 +1,27 @@
+Customer Information Report
+Date of report: 11.06.2021, 15:55:22
+Name, Lastname: KAZIM KORKMAZ
+ID: 100
+Segment: 5
+ASSETS
+     Name                     Quantity            Price                       Subtotal(TL)
+1    TURKISH LIRA             15000               1                                  15000
+2    HOLO COIN                15000               1.75                               26250
+3    DEFINITY COIN            1200                2.3                                 2760
+4    POWER COIN               100000              .38                                38000
+5    DOGE COIN                400                 3.6                                 1440
+6    SPACE COIN               15                  1550                               23250
+                                                                         Total(TL): 106700
+ 
+EXCHANGE TRANSACTIONS in last month
+Order ID  Order Type  Asset     Timestamp                Quantity  Price     Amount    Comm%       Comm
+1         SELL-Limit  HOL       01-Jun-2021              5000      1.7       8500      .1           8.5
+32        BUY-Market  DEF       04-Jun-2021              500       2.4       1200      .2           2.4
+2         SELL-Limit  DEF       01-Jun-2021              400       2.3       920       .2          1.84
+41        BUY-Market  PWC       07-Jun-2021              5000      .2        1000      .1             1
+31        BUY-Market  PWC       04-Jun-2021              5000      .2        1000      .1             1
+22        BUY-Market  SPC       03-Jun-2021              5         1455.14   7275.7    .35     25.46495
+21        BUY-Limit   SPC       03-Jun-2021              10        1456      14560     .35        50.96
+                                                                                        Total: 91.16495
+
+Statement processed.

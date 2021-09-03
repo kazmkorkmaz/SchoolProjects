@@ -1,0 +1,43 @@
+create or replace PROCEDURE Asset_Summary(v_asset_id asset.asset_id%TYPE)
+IS
+    v_report_date DATE;
+    v_asset_name asset.asset_name%TYPE;
+    v_asset_symbol asset.asset_abbreviation%TYPE;
+    v_current_price price.buy_price%TYPE;
+    v_customer_number NUMBER:=0;
+    v_customer_subtotal_total price.buy_price%TYPE:=0;
+    v_transactions_total ordertable.commission_value%TYPE:=0;
+BEGIN
+    SELECT sysdate, asset.asset_name, asset.asset_abbrevıatıon, price.buy_price
+    INTO v_report_date, v_asset_name, v_asset_symbol, v_current_price
+    FROM asset INNER JOIN price ON (asset.asset_id=price.asset_id)
+    WHERE asset.asset_id=v_asset_id AND price.is_active LIKE 'TRUE';
+    htp.p('Asset Information Report');
+    htp.p('Date of report: ' || TO_CHAR(v_report_date, 'DD.MM.YYYY, HH24:MI:SS'));
+    htp.p('Name-Symbol: '|| v_asset_name || ' - ' || v_asset_symbol);
+    htp.p('ID: ' || v_asset_id);
+    htp.p('Current price(TL): ' || v_current_price);
+    htp.p('Asset Holders');
+    htp.p(rpad(' ',5,' ') || rpad('Name',30,' ') || lpad('Quantity',15,' ') || lpad('Subtotal(TL)',15,' '));
+    FOR record_customer IN(SELECT cus.customer_name cname, cus.customer_lastname lastname, po.quantity quantity, po.quantity*pri.buy_price subtotal
+                           FROM customer cus INNER JOIN portfolio po ON (cus.customer_id=po.customer_id) INNER JOIN asset asse ON (asse.asset_id=po.asset_id) 
+                           INNER JOIN price pri ON (pri.asset_id=asse.asset_id)
+                           WHERE pri.is_active LIKE 'TRUE' AND po.asset_id=v_asset_id)
+    LOOP
+        v_customer_number:=v_customer_number+1;
+        v_customer_subtotal_total:=v_customer_subtotal_total+record_customer.subtotal;
+        htp.p(rpad(v_customer_number,5,' ') || rpad(record_customer.cname || ' ' || record_customer.lastname, 30,' ') || lpad(record_customer.quantity,15,' ') || lpad(record_customer.subtotal,15,' '));
+    END LOOP;
+    htp.p(rpad(' ',5,' ') || rpad(' ', 30,' ') || lpad('Total',15,' ') || lpad(v_customer_subtotal_total,15,' '));
+    htp.p(' ');
+    htp.p('TRANSACTIONS in LAST 24h');
+    htp.p(rpad('Order ID',10,' ') || rpad('Order Type',15,' ') || rpad('Timestamp',26,' ') || rpad('Quantity',10,' ') || rpad('Price',10,' ') || rpad('Amount',10,' ') || rpad('Comm%',8,' ') || lpad('Comm',8,' '));
+    FOR record_transactions IN(SELECT sysdate, ord.order_id orid, ord.order_type ortype, ast.asset_transaction_date astdate, ord.quantity quantity, ord.price price, ord.amount amount, ord.commission_rate comrate, ord.commission_value comvalue
+                              FROM ordertable ord INNER JOIN assettransaction ast ON (ord.order_id=ast.order_id) INNER JOIN asset asse ON (asse.asset_id=ast.asset_id)
+                              WHERE asse.asset_id=v_asset_id AND ast.asset_transaction_date>(sysdate-1))
+    LOOP
+        v_transactions_total:=v_transactions_total+record_transactions.comvalue;
+        htp.p(rpad(record_transactions.orid,10,' ') || rpad(record_transactions.ortype,15,' ') || rpad(record_transactions.astdate,26,' ') || rpad(record_transactions.quantity,10,' ') || rpad(record_transactions.price,10,' ') || rpad(record_transactions.amount,10,' ') || rpad(record_transactions.comrate,8,' ') || lpad(record_transactions.comvalue,8,' '));
+    END LOOP;
+    htp.p(rpad(' ',10,' ') || rpad(' ',15,' ') || rpad(' ',26,' ') || rpad(' ',10,' ') || rpad(' ',10,' ') || rpad(' ',10,' ') || rpad('TOTAL',8,' ') || lpad(v_transactions_total,8,' '));
+END;

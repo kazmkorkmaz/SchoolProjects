@@ -1,0 +1,39 @@
+create or replace PROCEDURE Exchange_Board_Procedure(v_startdate DATE, v_enddate DATE)
+IS
+    v_asset_number NUMBER:=0;
+    v_assets_subtotal_total ordertable.amount%TYPE:=0;
+    v_orders_total ordertable.price%TYPE:=0;
+BEGIN
+    htp.p('Exchange Board Report');
+    htp.p('Period of report: from ' || TO_CHAR(v_startdate, 'DD.MM.YYYY, HH24:MI:SS') || ' to ' || TO_CHAR(v_enddate, 'DD.MM.YYYY, HH24:MI:SS'));
+    htp.p('Assets Exchanged');
+    htp.p(rpad(' ',5,' ') || rpad('Name',15,' ') || lpad('Symbol',10,' ') || lpad('Transaction Quantity',25,' ') || lpad('Subtotal(TL)',25,' '));
+    FOR record_assets IN(SELECT asset.asset_name aname, asset.asset_abbreviation abbrev, SUM(ordertable.quantity) quantity, SUM(ordertable.amount) subtotal
+                         FROM assettransaction INNER JOIN asset ON (assettransaction.asset_id=asset.asset_id) INNER JOIN ordertable ON (ordertable.order_id=assettransaction.order_id)
+                         WHERE assettransaction.asset_transaction_date>v_startdate AND assettransaction.asset_transaction_date<v_enddate
+                         GROUP BY asset.asset_name, asset.asset_abbreviation
+                         HAVING SUM(ordertable.quantity) IN (SELECT SUM(ord.quantity) quantity
+                         FROM assettransaction ast INNER JOIN asset asse ON (ast.asset_id=asse.asset_id) INNER JOIN ordertable ord ON (ord.order_id=ast.order_id)
+                         WHERE ast.asset_transaction_date>v_startdate AND ast.asset_transaction_date<v_enddate
+                         GROUP BY asse.asset_name, asse.asset_abbreviation) AND SUM(ordertable.amount) IN (SELECT SUM(ord.amount)
+                         FROM assettransaction ast INNER JOIN asset asse ON (ast.asset_id=asse.asset_id) INNER JOIN ordertable ord ON (ord.order_id=ast.order_id)
+                         WHERE ast.asset_transaction_date>v_startdate AND ast.asset_transaction_date<v_enddate
+                         GROUP BY asse.asset_name, asse.asset_abbreviation))
+    LOOP
+        v_asset_number:=v_asset_number+1;
+        v_assets_subtotal_total:=v_assets_subtotal_total+record_assets.subtotal;
+        htp.p(rpad(v_asset_number,5,' ') || rpad(record_assets.aname,15,' ') || lpad(record_assets.abbrev,10,' ') || lpad(record_assets.quantity,25,' ') || lpad(record_assets.subtotal,25,' '));
+    END LOOP;
+    htp.p(rpad(' ',5,' ') || rpad(' ',15,' ') || lpad(' ',10,' ') || lpad('Total',25,' ') || lpad(v_assets_subtotal_total,25,' '));
+    htp.p(' ');
+    htp.p('ORDERS on BOARD on ' || TO_CHAR(v_enddate, 'DD.MM.YYYY, HH24:MI:SS'));
+    htp.p(rpad('Order ID',10,' ') || rpad('ASSET',10,' ') || rpad('Order Type',20,' ') || rpad('Timestamp',30,' ') || lpad('Quantity',15,' ') || lpad('Price',15,' '));
+    FOR record_orders IN(SELECT ord.order_id orid, asse.asset_abbreviation abbrev, ord.order_type ortype, ord.order_date ordate, ord.quantity quantity, ord.amount price
+                         FROM ordertable ord INNER JOIN asset asse ON (ord.asset_id=asse.asset_id) INNER JOIN orderhistory orh ON (orh.order_id=ord.order_id)
+                         WHERE (ord.is_active LIKE 'TRUE' AND ord.order_date<v_enddate) OR (ord.is_active LIKE 'False' AND ord.order_date<v_enddate AND orh.order_history_date>v_enddate))
+    LOOP
+        v_orders_total:=v_orders_total+record_orders.price;
+        htp.p(rpad(record_orders.orid,10,' ') || rpad(record_orders.abbrev,10,' ') || rpad(record_orders.ortype,20,' ') || rpad(record_orders.ordate,30,' ') || lpad(record_orders.quantity,15,' ') || lpad(record_orders.price,15,' '));
+    END LOOP;
+    htp.p(rpad(' ',10,' ') || rpad(' ',10,' ') || rpad(' ',20,' ') || rpad(' ',30,' ') || lpad('Total',15,' ') || lpad(v_orders_total,15,' '));
+END;

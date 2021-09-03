@@ -1,0 +1,27 @@
+Exchange Board Report
+Period of report: from 01.06.2021, 00:00:00 to 05.06.2021, 00:00:00
+Assets Exchanged
+     Name               Symbol     Transaction Quantity             Subtotal(TL)
+1    DOGE COIN             DOG                      800                     2880
+2    POWER COIN            PWC                    60000                    12000
+3    SPACE COIN            SPC                       50                  72791.2
+4    DEFINITY COIN         DEF                     3400                     7920
+5    HOLO COIN             HOL                     4000                     7200
+                                                  Total                 102791.2
+ 
+ORDERS on BOARD on 05.06.2021, 00:00:00
+Order ID  ASSET   Order Type          Timestamp                            Quantity          Price
+38        HOL     SELL-Limit          04-Jun-2021                              5000           8500
+37        DEF     SELL-Limit          04-Jun-2021                               200            460
+36        DEF     BUY-Stop            04-Jun-2021                              1000           2500
+12        DEF     BUY-Stop            02-Jun-2021                               500           1200
+5         DEF     SELL-Stop           01-Jun-2021                              2000           4000
+40        PWC     Sell-Limit          04-Jun-2021                             20000           7000
+26        PWC     SELL-Limit          03-Jun-2021                             10000           1900
+11        PWC     SELL-Stop           02-Jun-2021                             75000          22500
+6         DOG     SELL-Stop           01-Jun-2021                               400           1280
+                                                                              Total          49340
+
+Statement processed.
+
+0.02 seconds

@@ -1,0 +1,24 @@
+Asset Information Report
+Date of report: 07.06.2021, 13:07:30
+Name-Symbol: POWER COIN - PWC
+ID: 220
+Current price(TL): .38
+Asset Holders
+     Name                                 Quantity   Subtotal(TL)
+1    KAZIM KORKMAZ                          100000          38000
+2    NAZIM BASARAN                          200000          76000
+3    AYSE GUMUS                             350000         133000
+4    FARUK GUC                               40000          15200
+5    NAZLI CELEBI                            15000           5700
+                                             Total         267900
+ 
+TRANSACTIONS in LAST 24h
+Order ID  Order Type     Timestamp                 Quantity  Price     Amount    Comm%       Comm
+25        SELL-Limit     07-Jun-2021               10000     .2        2000      .1             2
+41        BUY-Market     07-Jun-2021               5000      .2        1000      .1             1
+43        BUY-Market     07-Jun-2021               5000      .2        1000      .1             1
+                                                                                 TOTAL          4
+
+Statement processed.
+
+0.00 seconds
